@@ -8,14 +8,28 @@
 # Build results
 bin/
 obj/
+*.exe
+*.dll
+*.pdb
 
-# Rider / VSCode
+# IDE / Editor
 .idea/
 .vscode/
 
-# Node (für Angular später)
-node_modules/
-dist/
+# Node / Angular
+TourPlanner.Frontend/node_modules/
+TourPlanner.Frontend/dist/
+TourPlanner.Frontend/.angular/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# logs
+# Logs / Databases
 *.log
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / Misc
+.DS_Store
+Thumbs.db

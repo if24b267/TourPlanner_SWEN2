@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [],
+  standalone: true,
+  imports: [RouterModule],
   templateUrl: './tour-detail.component.html',
-  styleUrl: './tour-detail.component.css'
+  styleUrls: ['./tour-detail.component.css']
 })
-export class TourDetailComponent {
-
-}
+export class TourDetailComponent {}

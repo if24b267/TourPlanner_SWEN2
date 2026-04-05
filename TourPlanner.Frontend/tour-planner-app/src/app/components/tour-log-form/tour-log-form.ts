@@ -30,8 +30,6 @@ export class TourLogForm {
   constructor(private logService: TourLogService) {}
 
   onSubmit(): void {
-  // Debug
-  console.log('Sending log:', this.log);
   
     this.errors = [];
     

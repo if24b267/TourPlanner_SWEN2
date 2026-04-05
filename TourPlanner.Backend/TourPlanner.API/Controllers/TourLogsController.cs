@@ -24,9 +24,6 @@ public class TourLogsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TourLog>> Create(Guid tourId, TourLog log)
     {
-        // Debug: Was kommt an?
-        Console.WriteLine($"Received: {System.Text.Json.JsonSerializer.Serialize(log)}");
-
         // Validation
         if (log.Difficulty < 1 || log.Difficulty > 10)
             return BadRequest("Difficulty must be 1-10");

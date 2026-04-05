@@ -1,0 +1,66 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TourService } from '../../services/tour.service';
+import { Tour } from '../../models/tour.model';
+import { TourDetail } from '../tour-detail/tour-detail';
+import { TourForm } from '../tour-form/tour-form';
+
+@Component({
+  selector: 'app-tour-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TourDetail, TourForm],
+  templateUrl: './tour-list.html',
+  styleUrls: ['./tour-list.scss']
+})
+export class TourList implements OnInit {
+  tours: Tour[] = [];
+  selectedTour?: Tour;
+  searchText: string = '';
+  showForm: boolean = false;
+
+  constructor(private tourService: TourService) {}
+
+  ngOnInit(): void {
+    this.loadTours();
+  }
+
+  loadTours(): void {
+    this.tourService.getAll().subscribe({
+      next: (data) => this.tours = data,
+      error: (err) => console.error('Error loading tours:', err)
+    });
+  }
+
+  onSelect(tour: Tour): void {
+    this.selectedTour = tour;
+  }
+
+  onSearch(): void {
+    if (this.searchText.trim()) {
+      this.tourService.search(this.searchText).subscribe({
+        next: (data) => this.tours = data,
+        error: (err) => console.error('Error searching:', err)
+      });
+    } else {
+      this.loadTours();
+    }
+  }
+
+  onDelete(id: string): void {
+    if (confirm('Delete this tour?')) {
+      this.tourService.delete(id).subscribe({
+        next: () => {
+          this.tours = this.tours.filter(t => t.id !== id);
+          if (this.selectedTour?.id === id) this.selectedTour = undefined;
+        },
+        error: (err) => console.error('Error deleting:', err)
+      });
+    }
+  }
+
+  onTourCreated(tour: Tour): void {
+    this.tours.push(tour);
+    this.showForm = false;
+  }
+}

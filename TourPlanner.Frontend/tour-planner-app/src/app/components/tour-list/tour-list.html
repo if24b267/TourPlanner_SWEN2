@@ -1,0 +1,52 @@
+<div class="tour-planner">
+    <h2 class="header-title">Tour Planner</h2>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="searchText" 
+      (keyup.enter)="onSearch()"
+      placeholder="Search tours..."
+      class="search-input">
+    <button (click)="onSearch()" class="btn btn-primary">Search</button>
+    <button (click)="showForm = !showForm" class="btn btn-success">
+      {{ showForm ? 'Cancel' : '+ New Tour' }}
+    </button>
+  </div>
+
+  <div class="content">
+    <!-- Tour List -->
+    <div class="tour-list">
+      <div 
+        *ngFor="let tour of tours" 
+        class="tour-card"
+        [class.selected]="selectedTour?.id === tour.id"
+        (click)="onSelect(tour)">
+        <h3>{{ tour.name }}</h3>
+        <p>{{ tour.from }} → {{ tour.to }}</p>
+        <span class="badge">{{ tour.transportType }}</span>
+        <br>
+        <small>Popularity: {{ tour.popularity }}</small>
+      </div>
+    </div>
+
+    <!-- Tour Details or Form -->
+    <div class="tour-detail">
+      <app-tour-form 
+        *ngIf="showForm" 
+        (tourCreated)="onTourCreated($event)">
+      </app-tour-form>
+      
+      <app-tour-detail 
+        *ngIf="!showForm && selectedTour" 
+        [tour]="selectedTour"
+        (deleted)="onDelete($event)">
+      </app-tour-detail>
+      
+      <div *ngIf="!showForm && !selectedTour" class="empty-state">
+        Select a tour or create a new one
+      </div>
+    </div>
+  </div>
+</div>

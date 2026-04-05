@@ -1,36 +1,51 @@
+using Microsoft.EntityFrameworkCore;
+using TourPlanner.BL.Interfaces;
+using TourPlanner.BL.Services;
+using TourPlanner.DAL;
 
-namespace TourPlanner.API
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// CORS for Angular
+builder.Services.AddCors(options =>
 {
-    public class Program
+    options.AddPolicy("Angular", policy =>
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
-            // Add services to the container.
+// SQLite
+var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "tourplanner.db");
+builder.Services.AddDbContext<TourDbContext>(options =>
+    options.UseSqlite($"Data Source={dbPath}"));
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+// Services
+builder.Services.AddScoped<ITourService, TourService>();
+builder.Services.AddScoped<ITourLogService, TourLogService>();
 
-            var app = builder.Build();
+var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
-        }
-    }
+// Ensure DB created
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TourDbContext>();
+    db.Database.EnsureCreated();
 }
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseCors("Angular");
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

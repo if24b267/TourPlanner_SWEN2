@@ -1,0 +1,101 @@
+.tour-planner {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  
+  .search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tour-list {
+  width: 300px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+  padding-right: 10px;
+}
+
+.tour-card {
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #f5f5f5;
+  }
+  
+  &.selected {
+    border-color: #1976d2;
+    background: #e3f2fd;
+  }
+  
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+  
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #1976d2;
+    color: white;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+}
+
+.tour-detail {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  
+  &.btn-primary {
+    background: #1976d2;
+    color: white;
+  }
+  
+  &.btn-success {
+    background: #4caf50;
+    color: white;
+  }
+}

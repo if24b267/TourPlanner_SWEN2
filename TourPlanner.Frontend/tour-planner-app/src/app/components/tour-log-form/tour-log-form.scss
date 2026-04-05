@@ -1,0 +1,50 @@
+.log-form {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  
+  h4 {
+    margin-top: 0;
+  }
+  
+  .error-messages {
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    
+    .error {
+      color: #c62828;
+      font-size: 14px;
+    }
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    
+    .form-group {
+      flex: 1;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+    
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+  }
+}

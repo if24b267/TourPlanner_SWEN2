@@ -1,4 +1,6 @@
-﻿namespace TourPlanner.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TourPlanner.Models;
 
 public class Tour
 {
@@ -14,7 +16,9 @@ public class Tour
     public List<TourLog> TourLogs { get; set; } = new();
 
     // Computed
+    [NotMapped]
     public int Popularity => TourLogs.Count;
+    [NotMapped]
     public double? ChildFriendliness => TourLogs.Any() ?
         Math.Max(0, 10 - TourLogs.Average(l => l.Difficulty) * 0.5) : null;
 }

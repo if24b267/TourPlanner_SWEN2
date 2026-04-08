@@ -30,11 +30,14 @@ public class TourLogService : ITourLogService
 
     public async Task<TourLog> CreateAsync(Guid tourId, TourLog log)
     {
-        var tour = await _context.Tours.FindAsync(tourId);
+        var tour = await _context.Tours.Include(t => t.TourLogs).FirstOrDefaultAsync(t => t.Id == tourId);
         if (tour == null) throw new Exception("Tour not found");
 
         log.DateTime = DateTime.UtcNow;
+        // EF Core thinks this is an existing entity because Guid is initialized to NewGuid()
+        _context.Entry(log).State = EntityState.Added;
         tour.TourLogs.Add(log);
+        
         await _context.SaveChangesAsync();
         return log;
     }

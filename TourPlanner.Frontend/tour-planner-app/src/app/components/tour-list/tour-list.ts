@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TourService } from '../../services/tour.service';
@@ -19,7 +19,7 @@ export class TourList implements OnInit {
   searchText: string = '';
   showForm: boolean = false;
 
-  constructor(private tourService: TourService) {}
+  constructor(private tourService: TourService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadTours();
@@ -27,7 +27,10 @@ export class TourList implements OnInit {
 
   loadTours(): void {
     this.tourService.getAll().subscribe({
-      next: (data) => this.tours = data,
+      next: (data) => {
+        this.tours = data;
+        this.cdr.detectChanges();
+      },
       error: (err) => console.error('Error loading tours:', err)
     });
   }
@@ -39,7 +42,10 @@ export class TourList implements OnInit {
   onSearch(): void {
     if (this.searchText.trim()) {
       this.tourService.search(this.searchText).subscribe({
-        next: (data) => this.tours = data,
+        next: (data) => {
+          this.tours = data;
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error('Error searching:', err)
       });
     } else {

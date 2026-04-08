@@ -69,7 +69,7 @@
           <span>Distance: {{ log.totalDistance }} km</span>
           <span>Time: {{ log.totalTimeHours }} h</span>
         </div>
-        <button (click)="onDeleteLog(log.id)" class="btn btn-small btn-danger">Delete</button>
+        <button (click)="onDeleteLog(log.id!)" class="btn btn-small btn-danger">Delete</button>
       </div>
     </div>
   </div>

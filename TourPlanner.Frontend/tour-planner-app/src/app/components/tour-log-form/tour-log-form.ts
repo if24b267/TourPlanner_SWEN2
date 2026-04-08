@@ -16,7 +16,6 @@ export class TourLogForm {
   @Output() logCreated = new EventEmitter<void>();
   
   log: TourLog = {
-    id: '',
     dateTime: new Date(),
     comment: '',
     difficulty: 5,

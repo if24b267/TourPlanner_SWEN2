@@ -14,7 +14,7 @@ export interface Tour {
 }
 
 export interface TourLog {
-  id: string;
+  id?: string;
   dateTime: Date;
   comment: string;
   difficulty: number;

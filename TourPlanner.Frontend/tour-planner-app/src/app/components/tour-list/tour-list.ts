@@ -59,6 +59,7 @@ export class TourList implements OnInit {
         next: () => {
           this.tours = this.tours.filter(t => t.id !== id);
           if (this.selectedTour?.id === id) this.selectedTour = undefined;
+          this.cdr.detectChanges();
         },
         error: (err) => console.error('Error deleting:', err)
       });

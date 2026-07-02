@@ -33,3 +33,7 @@ yarn-error.log*
 # OS / Misc
 .DS_Store
 Thumbs.db
+
+# Lokale Secrets - niemals committen
+**/appsettings.Development.json
+**/appsettings.Local.json

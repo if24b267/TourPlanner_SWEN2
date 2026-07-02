@@ -1,0 +1,36 @@
+.import-export-widget {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .btn {
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .btn-export,
+  .btn-import {
+    background: #607d8b;
+
+    &:hover { background: #546e7a; }
+  }
+
+  .status {
+    font-size: 12px;
+    color: #2e7d32;
+    white-space: nowrap;
+
+    &.error {
+      color: #c62828;
+    }
+  }
+}

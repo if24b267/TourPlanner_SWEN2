@@ -13,6 +13,7 @@
     <button (click)="showForm = !showForm" class="btn btn-success">
       {{ showForm ? 'Cancel' : '+ New Tour' }}
     </button>
+    <app-import-export (importCompleted)="onImportCompleted()"></app-import-export>
   </div>
 
   <div class="content">

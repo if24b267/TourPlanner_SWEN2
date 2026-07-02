@@ -19,9 +19,8 @@ export class TourLogService {
     return this.http.post<TourLog>(`${this.apiUrl}/${tourId}/logs`, log);
   }
 
-  update(id: string, log: TourLog): Observable<TourLog> {
-    // Note: Need tourId for URL, simplified here
-    return this.http.put<TourLog>(`${this.apiUrl}/logs/${id}`, log);
+  update(tourId: string, id: string, log: TourLog): Observable<TourLog> {
+    return this.http.put<TourLog>(`${this.apiUrl}/${tourId}/logs/${id}`, log);
   }
 
   delete(tourId: string, id: string): Observable<void> {

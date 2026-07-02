@@ -1,0 +1,12 @@
+<div class="import-export-widget">
+  <button class="btn btn-export" (click)="onExport()">⬇️ Export</button>
+
+  <label class="btn btn-import">
+    ⬆️ Import
+    <input type="file" accept=".json" (change)="onImportFileSelected($event)" hidden>
+  </label>
+
+  <span *ngIf="statusMessage" class="status" [class.error]="isError">
+    {{ statusMessage }}
+  </span>
+</div>

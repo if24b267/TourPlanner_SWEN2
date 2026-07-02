@@ -1,7 +1,8 @@
-<div class="map-container" [style.height]="height">
-  <div class="map-content">
+<div class="map-wrapper" [style.height]="height">
+  <div #mapContainer class="leaflet-map"></div>
+  <div class="map-fallback" *ngIf="!routeGeometryJson">
     <span class="map-icon">🗺️</span>
-    <p>Map Placeholder</p>
+    <p>Noch keine Routendaten verfügbar</p>
     <small *ngIf="from && to">{{ from }} → {{ to }}</small>
   </div>
 </div>

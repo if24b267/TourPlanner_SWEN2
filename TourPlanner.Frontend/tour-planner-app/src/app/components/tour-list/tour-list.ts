@@ -5,11 +5,12 @@ import { TourService } from '../../services/tour.service';
 import { Tour } from '../../models/tour.model';
 import { TourDetail } from '../tour-detail/tour-detail';
 import { TourForm } from '../tour-form/tour-form';
+import { ImportExportComponent } from '../import-export/import-export';
 
 @Component({
   selector: 'app-tour-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TourDetail, TourForm],
+  imports: [CommonModule, FormsModule, TourDetail, TourForm, ImportExportComponent],
   templateUrl: './tour-list.html',
   styleUrls: ['./tour-list.scss']
 })
@@ -69,5 +70,9 @@ export class TourList implements OnInit {
   onTourCreated(tour: Tour): void {
     this.tours.push(tour);
     this.showForm = false;
+  }
+
+  onImportCompleted(): void {
+    this.loadTours();
   }
 }

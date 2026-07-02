@@ -5,6 +5,7 @@ namespace TourPlanner.Models;
 public class Tour
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string TourDescription { get; set; } = string.Empty;
     public string From { get; set; } = string.Empty;
@@ -13,6 +14,7 @@ public class Tour
     public double TourDistance { get; set; }
     public double EstimatedTimeHours { get; set; }
     public string? RouteImagePath { get; set; }
+    public string? RouteGeometryJson { get; set; }
     public List<TourLog> TourLogs { get; set; } = new();
 
     // Computed

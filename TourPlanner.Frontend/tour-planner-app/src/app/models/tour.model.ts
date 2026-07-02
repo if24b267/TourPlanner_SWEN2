@@ -8,6 +8,7 @@ export interface Tour {
   tourDistance: number;
   estimatedTimeHours: number;
   routeImagePath?: string;
+  routeGeometryJson?: string;
   tourLogs: TourLog[];
   popularity: number;
   childFriendliness?: number;

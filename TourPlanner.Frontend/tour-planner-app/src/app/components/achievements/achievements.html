@@ -1,0 +1,18 @@
+<div class="achievements-widget">
+  <button class="toggle-btn" (click)="toggle()">
+    🏆 Achievements ({{ unlockedCount }}/{{ achievements.length }})
+  </button>
+
+  <div class="achievements-panel" *ngIf="isOpen">
+    <div *ngFor="let a of achievements" class="achievement-card" [class.locked]="!a.unlocked">
+      <span class="icon">{{ a.icon }}</span>
+      <div class="info">
+        <div class="name">{{ a.name }}</div>
+        <div class="description">{{ a.description }}</div>
+        <div class="unlocked-at" *ngIf="a.unlocked && a.unlockedAt">
+          Freigeschaltet: {{ a.unlockedAt | date:'medium' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

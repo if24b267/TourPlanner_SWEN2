@@ -30,17 +30,34 @@
     <p><strong>Distance:</strong> {{ tour.tourDistance | number:'1.1-1' }} km</p>
     <p><strong>Estimated Time:</strong> {{ tour.estimatedTimeHours | number:'1.1-1' }} h</p>
     <p><strong>Popularity:</strong> {{ tour.popularity }} logs</p>
-    <p *ngIf="tour.childFriendliness !== undefined">
+    <p *ngIf="tour.childFriendliness !== undefined && tour.childFriendliness !== null">
       <strong>Child Friendliness:</strong> {{ tour.childFriendliness | number:'1.1-1' }}/10
     </p>
   </div>
 
-  <!-- Map Placeholder (Reusable Component) -->
+  <!-- Map (Reusable Component) -->
   <app-map-placeholder 
     [from]="tour.from" 
     [to]="tour.to"
+    [routeGeometryJson]="tour.routeGeometryJson"
     height="250px">
   </app-map-placeholder>
+
+  <!-- Tour Image -->
+  <div class="tour-image">
+    <h3>Bild</h3>
+    <div *ngIf="uploadError" class="error">{{ uploadError }}</div>
+
+    <img *ngIf="imageUrl" [src]="imageUrl" alt="Tour Bild" class="tour-photo">
+
+    <div class="image-actions">
+      <label class="btn btn-secondary upload-label">
+        {{ imageUrl ? 'Bild ersetzen' : 'Bild hochladen' }}
+        <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onImageSelected($event)" hidden>
+      </label>
+      <button *ngIf="imageUrl" (click)="onImageDelete()" class="btn btn-danger">Bild löschen</button>
+    </div>
+  </div>
 
   <!-- Tour Logs -->
   <div class="tour-logs">

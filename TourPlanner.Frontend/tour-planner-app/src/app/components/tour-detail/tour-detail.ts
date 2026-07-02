@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Tour, TourLog } from '../../models/tour.model';
 import { TourLogService } from '../../services/tourlog.service';
 import { TourService } from '../../services/tour.service';
+import { TourImageService } from '../../services/tourimage.service';
 import { MapPlaceholderComponent } from '../map-placeholder/map-placeholder';
 import { TourLogForm } from '../tour-log-form/tour-log-form';
 
@@ -22,18 +23,30 @@ export class TourDetail implements OnInit, OnChanges {
   showLogForm: boolean = false;
   editing: boolean = false;
 
+  imageUrl: string | null = null;
+  uploadError: string = '';
+
   constructor(
     private logService: TourLogService,
     private tourService: TourService,
+    private imageService: TourImageService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.loadLogs();
+    this.refreshImage();
   }
 
   ngOnChanges(): void {
     this.loadLogs();
+    this.refreshImage();
+  }
+
+  refreshImage(): void {
+    this.imageUrl = this.tour.routeImagePath
+      ? this.imageService.getImageUrl(this.tour.id!)
+      : null;
   }
 
   loadLogs(): void {
@@ -50,6 +63,7 @@ export class TourDetail implements OnInit, OnChanges {
     this.tourService.getById(this.tour.id!).subscribe({
       next: (data) => {
         this.tour = data;
+        this.refreshImage();
         this.cdr.detectChanges();
       }
     });
@@ -75,5 +89,39 @@ export class TourDetail implements OnInit, OnChanges {
         error: (err) => console.error('Error deleting log:', err)
       });
     }
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    this.uploadError = '';
+
+    this.imageService.upload(this.tour.id!, file).subscribe({
+      next: () => {
+        this.tour.routeImagePath = 'uploaded'; // Platzhalter, echter Pfad kommt beim naechsten reload
+        this.refreshImage();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.uploadError = err.error || 'Upload fehlgeschlagen';
+      }
+    });
+
+    input.value = ''; // erlaubt erneuten Upload derselben Datei
+  }
+
+  onImageDelete(): void {
+    if (!confirm('Bild löschen?')) return;
+
+    this.imageService.delete(this.tour.id!).subscribe({
+      next: () => {
+        this.tour.routeImagePath = undefined;
+        this.imageUrl = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error deleting image:', err)
+    });
   }
 }

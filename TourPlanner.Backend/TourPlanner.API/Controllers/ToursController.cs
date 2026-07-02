@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TourPlanner.BL.Interfaces;
 using TourPlanner.Models;
 
@@ -6,6 +8,7 @@ namespace TourPlanner.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ToursController : ControllerBase
 {
     private readonly ITourService _tourService;
@@ -15,16 +18,18 @@ public class ToursController : ControllerBase
         _tourService = tourService;
     }
 
+    private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
     [HttpGet]
     public async Task<ActionResult<List<Tour>>> GetAll()
     {
-        return await _tourService.GetAllAsync();
+        return await _tourService.GetAllForUserAsync(CurrentUserId);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Tour>> GetById(Guid id)
     {
-        var tour = await _tourService.GetByIdAsync(id);
+        var tour = await _tourService.GetByIdAsync(id, CurrentUserId);
         if (tour == null) return NotFound();
         return tour;
     }
@@ -34,7 +39,6 @@ public class ToursController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        // Validation
         if (string.IsNullOrWhiteSpace(tour.Name))
             return BadRequest("Name is required");
         if (string.IsNullOrWhiteSpace(tour.From))
@@ -42,6 +46,7 @@ public class ToursController : ControllerBase
         if (string.IsNullOrWhiteSpace(tour.To))
             return BadRequest("To is required");
 
+        tour.UserId = CurrentUserId;
         var created = await _tourService.CreateAsync(tour);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
@@ -51,7 +56,7 @@ public class ToursController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var updated = await _tourService.UpdateAsync(id, tour);
+        var updated = await _tourService.UpdateAsync(id, tour, CurrentUserId);
         if (updated == null) return NotFound();
         return updated;
     }
@@ -59,7 +64,7 @@ public class ToursController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var success = await _tourService.DeleteAsync(id);
+        var success = await _tourService.DeleteAsync(id, CurrentUserId);
         if (!success) return NotFound();
         return NoContent();
     }
@@ -68,8 +73,8 @@ public class ToursController : ControllerBase
     public async Task<ActionResult<List<Tour>>> Search([FromQuery] string text)
     {
         if (string.IsNullOrWhiteSpace(text))
-            return await _tourService.GetAllAsync();
+            return await _tourService.GetAllForUserAsync(CurrentUserId);
 
-        return await _tourService.SearchAsync(text);
+        return await _tourService.SearchAsync(text, CurrentUserId);
     }
 }

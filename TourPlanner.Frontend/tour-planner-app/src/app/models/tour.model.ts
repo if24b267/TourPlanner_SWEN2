@@ -1,3 +1,6 @@
+// Muss mit den ORS-Profilen in OpenRouteService.cs (Backend) uebereinstimmen
+export const TRANSPORT_TYPES = ['Car', 'Bike', 'Hike', 'Running', 'Vacation'];
+
 export interface Tour {
   id?: string;
   name: string;
@@ -22,4 +25,18 @@ export interface TourLog {
   totalDistance: number;
   totalTimeHours: number;
   rating: number;
+}
+
+export function createBlankTour(): Tour {
+  return {
+    name: '',
+    tourDescription: '',
+    from: '',
+    to: '',
+    transportType: 'Car',
+    tourDistance: 0,
+    estimatedTimeHours: 0,
+    popularity: 0,
+    tourLogs: []
+  };
 }

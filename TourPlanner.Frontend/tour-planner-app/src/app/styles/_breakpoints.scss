@@ -1,0 +1,16 @@
+// Zentrale Breakpoint-Werte, damit responsive Anpassungen nicht als
+// Magic Numbers in jeder Komponente einzeln gepflegt werden muessen.
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}

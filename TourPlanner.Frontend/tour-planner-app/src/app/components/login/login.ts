@@ -16,7 +16,7 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(public authService: AuthService) {}
 
   toggleMode(): void {
     this.mode = this.mode === 'login' ? 'register' : 'login';
@@ -25,6 +25,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.errorMessage = '';
+    this.authService.sessionExpired.set(false);
 
     const action = this.mode === 'login'
       ? this.authService.login(this.username, this.password)

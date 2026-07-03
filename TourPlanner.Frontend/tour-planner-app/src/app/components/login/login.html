@@ -2,6 +2,7 @@
   <div class="login-card">
     <h2>{{ mode === 'login' ? 'Login' : 'Registrieren' }}</h2>
 
+    <div *ngIf="authService.sessionExpired()" class="error">Sitzung abgelaufen, bitte erneut einloggen.</div>
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
     <form (ngSubmit)="onSubmit()">

@@ -2,7 +2,7 @@
   <div class="header">
     <h2>{{ tour.name }}</h2>
     <div class="actions">
-      <button (click)="editing = !editing" class="btn btn-secondary">
+      <button (click)="editing ? cancelEdit() : startEdit()" class="btn btn-secondary">
         {{ editing ? 'Cancel' : 'Edit' }}
       </button>
       <button (click)="onDelete()" class="btn btn-danger">Delete</button>
@@ -11,15 +11,35 @@
 
   <!-- Edit Form -->
   <div *ngIf="editing" class="edit-form">
+    <div *ngIf="editErrors.length > 0" class="error-messages">
+      <div *ngFor="let error of editErrors" class="error">{{ error }}</div>
+    </div>
+
     <div class="form-group">
-      <label>Name</label>
-      <input [(ngModel)]="tour.name">
+      <label>Name *</label>
+      <input [(ngModel)]="editTour.name">
     </div>
     <div class="form-group">
       <label>Description</label>
-      <textarea [(ngModel)]="tour.tourDescription" rows="3"></textarea>
+      <textarea [(ngModel)]="editTour.tourDescription" rows="3"></textarea>
     </div>
-    <button (click)="editing = false" class="btn btn-primary">Save</button>
+    <div class="form-row">
+      <div class="form-group">
+        <label>From *</label>
+        <input [(ngModel)]="editTour.from">
+      </div>
+      <div class="form-group">
+        <label>To *</label>
+        <input [(ngModel)]="editTour.to">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Transport Type</label>
+      <select [(ngModel)]="editTour.transportType">
+        <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+    <button (click)="onSaveEdit()" class="btn btn-primary">Save</button>
   </div>
 
   <!-- View Mode -->
@@ -63,15 +83,18 @@
   <div class="tour-logs">
     <div class="logs-header">
       <h3>Tour Logs ({{ logs.length }})</h3>
-      <button (click)="showLogForm = !showLogForm" class="btn btn-success">
+      <button (click)="onAddLogClick()" class="btn btn-success">
         {{ showLogForm ? 'Cancel' : '+ Add Log' }}
       </button>
     </div>
 
-    <app-tour-log-form 
-      *ngIf="showLogForm" 
+    <app-tour-log-form
+      *ngIf="showLogForm"
       [tourId]="tour.id!"
-      (logCreated)="onLogCreated()">
+      [existingLog]="editingLog"
+      (logCreated)="onLogSaved()"
+      (logUpdated)="onLogSaved()"
+      (cancelled)="onLogFormCancelled()">
     </app-tour-log-form>
 
     <div class="logs-list">
@@ -86,6 +109,7 @@
           <span>Distance: {{ log.totalDistance }} km</span>
           <span>Time: {{ log.totalTimeHours }} h</span>
         </div>
+        <button (click)="onEditLog(log)" class="btn btn-small btn-secondary">Edit</button>
         <button (click)="onDeleteLog(log.id!)" class="btn btn-small btn-danger">Delete</button>
       </div>
     </div>

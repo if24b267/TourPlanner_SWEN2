@@ -1,3 +1,5 @@
+@use '../../styles/breakpoints' as *;
+
 .log-form {
   background: #e3f2fd;
   padding: 15px;
@@ -46,5 +48,17 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+@include mobile {
+  .log-form .form-row {
+    flex-direction: column;
+    gap: 0;
   }
 }

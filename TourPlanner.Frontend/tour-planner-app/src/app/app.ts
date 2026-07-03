@@ -24,6 +24,8 @@ import { AuthService } from './services/auth.service';
     </ng-container>
   `,
   styles: [`
+    @use './styles/breakpoints' as *;
+
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -48,6 +50,14 @@ import { AuthService } from './services/auth.service';
       padding: 6px 14px;
       border-radius: 4px;
       cursor: pointer;
+    }
+    @include mobile {
+      .topbar {
+        padding: 10px 12px;
+      }
+      .title {
+        font-size: 15px;
+      }
     }
   `]
 })

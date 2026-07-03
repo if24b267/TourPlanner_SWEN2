@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TourPlanner.BL.Configuration;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 
 namespace TourPlanner.BL.Services;
@@ -34,7 +35,7 @@ public class ImageStorageService : IImageStorageService
     {
         var extension = Path.GetExtension(originalFileName).ToLowerInvariant();
         if (!ContentTypeMap.ContainsKey(extension))
-            throw new InvalidOperationException($"Dateityp {extension} wird nicht unterstuetzt. Erlaubt: {string.Join(", ", ContentTypeMap.Keys)}");
+            throw new UnsupportedFileTypeException($"Dateityp {extension} wird nicht unterstuetzt. Erlaubt: {string.Join(", ", ContentTypeMap.Keys)}");
 
         var fileName = $"{tourId}{extension}";
         var fullPath = Path.Combine(_options.BaseDirectory, fileName);

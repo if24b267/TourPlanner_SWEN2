@@ -1,5 +1,5 @@
 <div class="log-form">
-  <h4>Add Tour Log</h4>
+  <h4>{{ existingLog ? 'Edit Tour Log' : 'Add Tour Log' }}</h4>
   
   <div *ngIf="errors.length > 0" class="error-messages">
     <div *ngFor="let error of errors" class="error">{{ error }}</div>
@@ -35,6 +35,9 @@
       <textarea [(ngModel)]="log.comment" name="comment" rows="2"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary">Add Log</button>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ existingLog ? 'Save Log' : 'Add Log' }}</button>
+      <button type="button" (click)="onCancel()" class="btn btn-secondary">Cancel</button>
+    </div>
   </form>
 </div>

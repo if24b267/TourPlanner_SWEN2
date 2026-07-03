@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TourService } from '../../services/tour.service';
+import { AchievementService } from '../../services/achievement.service';
 import { Tour } from '../../models/tour.model';
 import { TourDetail } from '../tour-detail/tour-detail';
 import { TourForm } from '../tour-form/tour-form';
@@ -20,7 +21,7 @@ export class TourList implements OnInit {
   searchText: string = '';
   showForm: boolean = false;
 
-  constructor(private tourService: TourService, private cdr: ChangeDetectorRef) { }
+  constructor(private tourService: TourService, private cdr: ChangeDetectorRef, private achievementService: AchievementService) { }
 
   ngOnInit(): void {
     this.loadTours();
@@ -70,6 +71,14 @@ export class TourList implements OnInit {
   onTourCreated(tour: Tour): void {
     this.tours.push(tour);
     this.showForm = false;
+    this.achievementService.refresh();
+  }
+
+  onTourChanged(): void {
+    // Die Tour-Objektreferenz in tours[]/selectedTour wurde bereits von TourDetail
+    // gemergt (Object.assign) - hier muessen wir nur noch TourList selbst als
+    // "zu pruefen" markieren, damit die Sidebar-Kachel den neuen Stand zeigt.
+    this.cdr.detectChanges();
   }
 
   onImportCompleted(): void {

@@ -42,7 +42,8 @@
       <app-tour-detail 
         *ngIf="!showForm && selectedTour" 
         [tour]="selectedTour"
-        (deleted)="onDelete($event)">
+        (deleted)="onDelete($event)"
+        (tourChanged)="onTourChanged()">
       </app-tour-detail>
       
       <div *ngIf="!showForm && !selectedTour" class="empty-state">

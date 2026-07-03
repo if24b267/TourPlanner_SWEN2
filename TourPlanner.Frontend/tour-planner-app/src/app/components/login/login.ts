@@ -15,6 +15,7 @@ export class LoginComponent {
   username = '';
   password = '';
   errorMessage = '';
+  submitting = false;
 
   constructor(public authService: AuthService) {}
 
@@ -23,17 +24,26 @@ export class LoginComponent {
     this.errorMessage = '';
   }
 
-  onSubmit(): void {
+  onSubmit(form: any): void {
+    if (form.invalid) {
+      return;
+    }
+
     this.errorMessage = '';
     this.authService.sessionExpired.set(false);
+    this.submitting = true;
 
     const action = this.mode === 'login'
       ? this.authService.login(this.username, this.password)
       : this.authService.register(this.username, this.password);
 
     action.subscribe({
-      next: () => { /* isLoggedIn-Signal wird im Service automatisch gesetzt */ },
+      next: () => {
+        this.submitting = false;
+        /* isLoggedIn-Signal wird im Service automatisch gesetzt */
+      },
       error: (err) => {
+        this.submitting = false;
         this.errorMessage = err.error?.message || 'Anmeldung fehlgeschlagen';
       }
     });

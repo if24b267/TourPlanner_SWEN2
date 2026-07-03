@@ -5,17 +5,36 @@
     <div *ngIf="authService.sessionExpired()" class="error">Sitzung abgelaufen, bitte erneut einloggen.</div>
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
-    <form (ngSubmit)="onSubmit()">
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
       <div class="form-group">
         <label>Username</label>
-        <input [(ngModel)]="username" name="username" required>
+        <input
+          [(ngModel)]="username"
+          name="username"
+          required
+          minlength="3"
+          #usernameField="ngModel">
+        <div class="field-error" *ngIf="usernameField.invalid && (usernameField.dirty || usernameField.touched)">
+          <span *ngIf="usernameField.errors?.['required']">Username ist erforderlich.</span>
+          <span *ngIf="usernameField.errors?.['minlength']">Username muss mindestens 3 Zeichen haben.</span>
+        </div>
       </div>
       <div class="form-group">
         <label>Passwort</label>
-        <input type="password" [(ngModel)]="password" name="password" required minlength="6">
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          minlength="6"
+          #passwordField="ngModel">
+        <div class="field-error" *ngIf="passwordField.invalid && (passwordField.dirty || passwordField.touched)">
+          <span *ngIf="passwordField.errors?.['required']">Passwort ist erforderlich.</span>
+          <span *ngIf="passwordField.errors?.['minlength']">Passwort muss mindestens 6 Zeichen haben.</span>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary">
-        {{ mode === 'login' ? 'Einloggen' : 'Registrieren' }}
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || submitting">
+        {{ submitting ? '...' : (mode === 'login' ? 'Einloggen' : 'Registrieren') }}
       </button>
     </form>
 

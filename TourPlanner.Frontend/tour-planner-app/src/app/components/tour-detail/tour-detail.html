@@ -100,7 +100,7 @@
     <div class="logs-list">
       <div *ngFor="let log of logs" class="log-card">
         <div class="log-header">
-          <span class="date">{{ log.dateTime | date:'medium' }}</span>
+          <span class="date">{{ log.dateTime | date:'MMM d, y, h:mm a' }}</span>
           <span class="rating">⭐ {{ log.rating }}/10</span>
         </div>
         <p>{{ log.comment || 'No comment' }}</p>

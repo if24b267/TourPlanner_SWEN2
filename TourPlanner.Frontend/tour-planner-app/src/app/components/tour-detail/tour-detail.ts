@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Tour, TourLog, TRANSPORT_TYPES, createBlankTour } from '../../models/tour.model';
 import { TourLogService } from '../../services/tourlog.service';
 import { TourService } from '../../services/tour.service';
+import { AchievementService } from '../../services/achievement.service';
 import { TourImageService } from '../../services/tourimage.service';
 import { MapPlaceholderComponent } from '../map-placeholder/map-placeholder';
 import { TourLogForm } from '../tour-log-form/tour-log-form';
@@ -18,7 +19,8 @@ import { TourLogForm } from '../tour-log-form/tour-log-form';
 export class TourDetail implements OnInit, OnChanges {
   @Input() tour!: Tour;
   @Output() deleted = new EventEmitter<string>();
-
+  @Output() tourChanged = new EventEmitter<void>();
+  
   logs: TourLog[] = [];
   showLogForm: boolean = false;
   editingLog: TourLog | null = null;
@@ -35,6 +37,7 @@ export class TourDetail implements OnInit, OnChanges {
     private logService: TourLogService,
     private tourService: TourService,
     private imageService: TourImageService,
+    private achievementService: AchievementService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -82,6 +85,10 @@ export class TourDetail implements OnInit, OnChanges {
         Object.assign(this.tour, data);
         this.refreshImage();
         this.cdr.detectChanges();
+        // TourList (Elternkomponente) muss explizit informiert werden, da
+        // this.cdr.detectChanges() hier nur TourDetail selbst aktualisiert,
+        // nicht die Sidebar-Kachel im Elternteil.
+        this.tourChanged.emit();
       }
     });
   }
@@ -118,6 +125,7 @@ export class TourDetail implements OnInit, OnChanges {
         this.editing = false;
         this.refreshImage();
         this.cdr.detectChanges();
+        this.tourChanged.emit();
       },
       error: (err) => this.editErrors.push('Failed to update tour: ' + err.message)
     });
@@ -150,6 +158,7 @@ export class TourDetail implements OnInit, OnChanges {
     this.editingLog = null;
     this.loadLogs();
     this.reloadTour();
+    this.achievementService.refresh();
   }
 
   onDeleteLog(logId: string): void {

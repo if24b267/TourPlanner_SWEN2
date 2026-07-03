@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Achievement } from '../../models/achievement.model';
 import { AchievementService } from '../../services/achievement.service';
@@ -14,7 +14,18 @@ export class AchievementsComponent implements OnInit {
   achievements: Achievement[] = [];
   isOpen = false;
 
-  constructor(private achievementService: AchievementService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private achievementService: AchievementService,
+    private cdr: ChangeDetectorRef,
+    private elementRef: ElementRef
+  ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.isOpen && !this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
 
   ngOnInit(): void {
     this.load();

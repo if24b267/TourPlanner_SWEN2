@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TourPlanner.BL.Configuration;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 using TourPlanner.BL.Models;
 
@@ -82,7 +83,7 @@ public class OpenRouteService : IRouteService
 
         var features = doc.RootElement.GetProperty("features");
         if (features.GetArrayLength() == 0)
-            throw new InvalidOperationException($"Keine Koordinaten gefunden fuer Adresse: {address}");
+            throw new RouteLookupException($"Keine Koordinaten gefunden fuer Adresse: {address}");
 
         var coords = features[0].GetProperty("geometry").GetProperty("coordinates");
         return new[] { coords[0].GetDouble(), coords[1].GetDouble() };

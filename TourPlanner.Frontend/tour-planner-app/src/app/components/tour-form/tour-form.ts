@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TourService } from '../../services/tour.service';
-import { Tour } from '../../models/tour.model';
+import { Tour, TRANSPORT_TYPES, createBlankTour } from '../../models/tour.model';
 
 @Component({
   selector: 'app-tour-form',
@@ -14,19 +14,9 @@ import { Tour } from '../../models/tour.model';
 export class TourForm {
   @Output() tourCreated = new EventEmitter<Tour>();
   
-  tour: Tour = {
-    name: '',
-    tourDescription: '',
-    from: '',
-    to: '',
-    transportType: 'Car',
-    tourDistance: 0,
-    popularity: 0,
-    estimatedTimeHours: 0,
-    tourLogs: []
-  };
+  tour: Tour = createBlankTour();
 
-  transportTypes = ['Car', 'Bike', 'Foot', 'Train'];
+  transportTypes = TRANSPORT_TYPES;
   errors: string[] = [];
 
   constructor(private tourService: TourService) {}

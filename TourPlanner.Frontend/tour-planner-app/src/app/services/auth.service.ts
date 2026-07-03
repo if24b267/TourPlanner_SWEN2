@@ -14,6 +14,7 @@ export class AuthService {
   private tokenKey = 'tourplanner_token';
 
   isLoggedIn = signal<boolean>(!!this.getToken());
+  sessionExpired = signal<boolean>(false);
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +33,11 @@ export class AuthService {
     this.isLoggedIn.set(false);
   }
 
+  handleUnauthorized(): void {
+    this.sessionExpired.set(true);
+    this.logout();
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
@@ -39,5 +45,6 @@ export class AuthService {
   private setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
     this.isLoggedIn.set(true);
+    this.sessionExpired.set(false);
   }
 }

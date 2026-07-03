@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourLogService, TourLogService>();
 builder.Services.AddScoped<IImportExportService, ImportExportService>();
 builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -107,6 +109,22 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Faengt Exceptions ab, die von keinem spezifischeren catch-Block behandelt wurden
+// (z.B. DbUpdateException), damit Clients immer eine saubere JSON-Antwort statt
+// eines nackten 500 ohne Body bekommen, und der Fehler trotzdem geloggt wird.
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        Log.Error(exception, "Unbehandelte Exception bei {Path}", context.Request.Path);
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new { message = "Ein unerwarteter Fehler ist aufgetreten." });
+    });
+});
 
 app.UseSerilogRequestLogging();
 

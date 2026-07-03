@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 
 namespace TourPlanner.API.Controllers;
@@ -44,7 +45,7 @@ public class TourImagesController : ControllerBase
 
             return Ok(new { path = relativePath });
         }
-        catch (InvalidOperationException ex)
+        catch (UnsupportedFileTypeException ex)
         {
             return BadRequest(ex.Message);
         }

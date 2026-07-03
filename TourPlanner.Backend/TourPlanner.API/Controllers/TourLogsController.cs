@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 using TourPlanner.Models;
 
@@ -51,9 +52,9 @@ public class TourLogsController : ControllerBase
             var created = await _logService.CreateAsync(tourId, log);
             return CreatedAtAction(nameof(GetByTour), new { tourId }, created);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
-            return BadRequest(ex.Message);
+            return NotFound(ex.Message);
         }
     }
 
@@ -67,8 +68,12 @@ public class TourLogsController : ControllerBase
             return BadRequest("Difficulty must be 1-10");
         if (log.Rating < 1 || log.Rating > 10)
             return BadRequest("Rating must be 1-10");
+        if (log.TotalDistance < 0)
+            return BadRequest("Distance cannot be negative");
+        if (log.TotalTimeHours < 0)
+            return BadRequest("Time cannot be negative");
 
-        var updated = await _logService.UpdateAsync(id, log);
+        var updated = await _logService.UpdateAsync(tourId, id, log);
         if (updated == null) return NotFound();
         return updated;
     }
@@ -79,7 +84,7 @@ public class TourLogsController : ControllerBase
         var tour = await _tourService.GetByIdAsync(tourId, CurrentUserId);
         if (tour == null) return NotFound();
 
-        var success = await _logService.DeleteAsync(id);
+        var success = await _logService.DeleteAsync(tourId, id);
         if (!success) return NotFound();
         return NoContent();
     }

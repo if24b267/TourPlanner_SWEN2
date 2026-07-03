@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 using TourPlanner.DAL;
 using TourPlanner.Models;
@@ -56,7 +58,11 @@ public class TourService : ITourService
 
     public async Task<Tour?> UpdateAsync(Guid id, Tour tour, Guid userId)
     {
-        var existing = await _context.Tours.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+        // Include TourLogs, sonst wuerden die berechneten Felder (Popularity,
+        // ChildFriendliness) in der Antwort faelschlich auf 0/null zurueckfallen.
+        var existing = await _context.Tours
+            .Include(t => t.TourLogs)
+            .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
         if (existing == null) return null;
 
         existing.Name = tour.Name;
@@ -121,15 +127,17 @@ public class TourService : ITourService
             tour.EstimatedTimeHours = route.DurationHours;
             tour.RouteGeometryJson = route.GeometryGeoJson;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is RouteLookupException or HttpRequestException or JsonException or TaskCanceledException)
         {
             _logger.LogWarning(ex, "OpenRouteService-Aufruf fehlgeschlagen fuer Tour '{TourName}', verwende Fallback-Werte", tour.Name);
 
-            if (tour.TourDistance == 0)
-            {
-                tour.TourDistance = new Random().Next(5, 100);
-                tour.EstimatedTimeHours = tour.TourDistance / 15.0;
-            }
+            // Immer neu wuerfeln statt nur bei TourDistance == 0: bei einem Update gehoert
+            // ein zuvor gespeicherter Wert zur alten From/To-Kombination und darf nicht
+            // unveraendert mit der neuen Route stehen bleiben (sonst passen Distanz/Zeit
+            // nicht mehr zur angezeigten Strecke).
+            tour.TourDistance = new Random().Next(5, 100);
+            tour.EstimatedTimeHours = tour.TourDistance / 15.0;
+            tour.RouteGeometryJson = null;
         }
     }
 

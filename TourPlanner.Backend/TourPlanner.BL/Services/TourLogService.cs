@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TourPlanner.BL.Exceptions;
 using TourPlanner.BL.Interfaces;
 using TourPlanner.DAL;
 using TourPlanner.Models;
@@ -23,15 +24,23 @@ public class TourLogService : ITourLogService
         return tour?.TourLogs?.ToList() ?? new List<TourLog>();
     }
 
-    public async Task<TourLog?> GetByIdAsync(Guid id)
+    public async Task<TourLog?> GetByIdAsync(Guid tourId, Guid id)
     {
-        return await _context.TourLogs.FindAsync(id);
+        return await GetOwnedLogAsync(tourId, id);
+    }
+
+    // Zentrale Stelle fuer den Besitz-Check (Log gehoert zu dieser Tour) - verhindert IDOR.
+    // Einzige Stelle, die den TourId-Shadow-Property-Namen kennen muss.
+    private Task<TourLog?> GetOwnedLogAsync(Guid tourId, Guid id)
+    {
+        return _context.TourLogs
+            .FirstOrDefaultAsync(l => l.Id == id && EF.Property<Guid?>(l, "TourId") == tourId);
     }
 
     public async Task<TourLog> CreateAsync(Guid tourId, TourLog log)
     {
         var tour = await _context.Tours.Include(t => t.TourLogs).FirstOrDefaultAsync(t => t.Id == tourId);
-        if (tour == null) throw new Exception("Tour not found");
+        if (tour == null) throw new EntityNotFoundException($"Tour {tourId} not found");
 
         log.DateTime = DateTime.UtcNow;
         // EF Core thinks this is an existing entity because Guid is initialized to NewGuid()
@@ -42,9 +51,9 @@ public class TourLogService : ITourLogService
         return log;
     }
 
-    public async Task<TourLog?> UpdateAsync(Guid id, TourLog log)
+    public async Task<TourLog?> UpdateAsync(Guid tourId, Guid id, TourLog log)
     {
-        var existing = await _context.TourLogs.FindAsync(id);
+        var existing = await GetOwnedLogAsync(tourId, id);
         if (existing == null) return null;
 
         existing.Comment = log.Comment;
@@ -57,9 +66,9 @@ public class TourLogService : ITourLogService
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid tourId, Guid id)
     {
-        var log = await _context.TourLogs.FindAsync(id);
+        var log = await GetOwnedLogAsync(tourId, id);
         if (log == null) return false;
 
         _context.TourLogs.Remove(log);

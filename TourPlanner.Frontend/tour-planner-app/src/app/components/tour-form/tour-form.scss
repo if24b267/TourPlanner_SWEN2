@@ -1,3 +1,5 @@
+@use '../../styles/breakpoints' as *;
+
 .tour-form {
   padding: 20px;
   
@@ -37,9 +39,16 @@
   .form-row {
     display: flex;
     gap: 15px;
-    
+
     .form-group {
       flex: 1;
     }
+  }
+}
+
+@include mobile {
+  .tour-form .form-row {
+    flex-direction: column;
+    gap: 0;
   }
 }

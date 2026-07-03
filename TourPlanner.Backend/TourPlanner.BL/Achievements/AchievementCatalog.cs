@@ -2,6 +2,12 @@
 
 namespace TourPlanner.BL.Achievements;
 
+/// <summary>
+/// Implements the Strategy Pattern: each achievement encapsulates its own evaluation
+/// algorithm as an interchangeable Func&lt;List&lt;Tour&gt;, bool&gt; strategy. New achievements
+/// can be added by extending this catalog without modifying AchievementService
+/// (Open/Closed Principle).
+/// </summary>
 public static class AchievementCatalog
 {
     public static readonly List<AchievementDefinition> All = new()
